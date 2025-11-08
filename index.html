@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>EMD Maintenance</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>MNT Job Report</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ✅ Favicon untuk Browser, Mobile, dan Desktop -->
+  <link rel="icon" type="image/png" sizes="16x16" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2">
+  <link rel="icon" type="image/png" sizes="48x48" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2">
+  <link rel="icon" type="image/png" sizes="64x64" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2">
+  <link rel="icon" type="image/png" sizes="180x180" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2">
+  <link rel="shortcut icon" href="https://i.postimg.cc/cJyMjgpr/MNT.png?v=2" type="image/png">
+</head>
+
+<body>
+  <!-- ===== LOGIN PAGE ===== -->
+  <div id="loginPage">
+    <!-- 🔹 Sisi kiri (Wallpaper & Branding) -->
+    <div class="login-wallpaper">
+      <div class="overlay"></div>
+      <div class="branding">
+        <h1>EMD Jambi<br><span>Monitoring Job Report projeck Indosat & Pertamina Jambi</span></h1>
+        <p>Smart Dashboard for Report & Maintenance EMD</p>
+      </div>
+    </div>
+
+    <!-- 🔹 Sisi kanan (Form Login) -->
+    <div class="login-card">
+      <div class="login-header">
+        <img src="https://i.postimg.cc/cJyMjgpr/MNT.jpg" alt="Logo" class="login-logo" />
+        <h2>Welcome Back EOS & DA</h2>
+        <p class="login-subtitle">Silakan masuk untuk melanjutkan</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); login();">
+        <input type="text" id="loginEmail" placeholder="Email" required />
+
+        <!-- Input Password dengan tombol show/hide -->
+        <div class="password-container">
+          <input type="password" id="loginPassword" placeholder="Password" required />
+          <span id="togglePassword" class="toggle-password" title="Tampilkan/Sembunyikan Password">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </span>
+
+        </div>
+
+        <button type="button" onclick="login()">Login</button>
+        <div class="login-error" id="loginError"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <header>
+    <div class="header-container">
+      <div class="header-text">
+        <h1>DASHBOARD MNT PROGRES VTS PERTAMINA JAMBI</h1>
+        <div class="header-links">
+          <a href="javascript:void(0);" onclick="window.open('https://web.arvento.com/home.aspx', '_blank')">🌐 web Arvento </a>
+          <a href="javascript:void(0);" onclick="window.open('https://forminputbbm-krpfield-zona1.netlify.app/', '_blank')">🌐 web Form BBM</a>
+          <a href="javascript:void(0);" onclick="window.open('https://web.arvento.com/home.aspx', '_blank')">🌐 web Arvento 3</a>
+        </div>
+        <!-- Info User -->
+        <div class="user-info">
+          <img id="userPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Photo">
+          <span id="loggedInUser">Guest</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jam & Logout -->
+    <button id="logoutBtn" onclick="logout()" class="logout-btn">Logout</button>
+
+    <!-- Tombol Menu -->
+    <button class="slide-btn" onclick="togglePanel()">▼ Menu</button>
+
+    <!-- Panel Turun -->
+    <div id="slidePanel" class="slide-panel">
+      <a href="#" onclick="showLoaderAndRun(showForm)">Form Pekerjaan</a>
+      <a href="#" onclick="showLoaderAndRun(showReport)">Laporan Pekerjaan</a>
+      <a href="#" onclick="showLoaderAndRun(showPhotoReport)">Laporan Foto per Nomor Pekerjaan</a>
+    </div>
+  </header>
+
+  <!-- Loader -->
+  <div id="loaderOverlay">
+    <div class="spinner"></div>
+    <p>Memuat data, harap tunggu...</p>
+  </div>
+
+  <main>
+    <!-- NOMOR PEKERJAAN -->
+    <div class="job-number" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+      <button class="btn" onclick="generateJobNumber()">🔢 Generate Job Number</button>
+
+      <strong>No. Pekerjaan:</strong>
+      <span id="jobNumber" style="font-weight: bold; font-size: 1.2em; color: #1e3a8a;">...</span>
+      <p id="current-date" class="header-date"></p>
+    </div>
+
+    <!-- FORM -->
+    <form id="jobForm">
+
+      <!-- BAGIAN 1 -->
+      <div class="form-section">
+        <h2>Bagian A – Informasi Pekerjaan</h2>
+        <div class="grid-3">
+          <div>
+            <label for="user">User Name</label>
+            <input type="text" id="user" placeholder="Masukkan nama user">
+          </div>
+          <div>
+            <label for="workingType">Working Type</label>
+            <select id="workingType">
+              <option value="">Pilih</option>
+              <option>Maintenance</option>
+              <option>Dismantle</option>
+              <option>Installation</option>
+              <option>Re Installation</option>
+              <option>Ganti Unit</option>
+            </select>
+          </div>
+          <div>
+            <label for="installationType">Installation Type</label>
+            <select id="installationType">
+              <option value="">Pilih</option>
+              <option>GPS Unit</option>
+              <option>RFID</option>
+              <option>Fuel Stick</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAGIAN 2 -->
+      <div class="form-section">
+        <h2>Bagian B – Informasi Kendaraan</h2>
+        <div class="grid-3">
+
+          <div><label>Merk Kendaraan</label>
+            <input type="text" id="merkKendaraan" placeholder="">
+          </div>
+
+          <div><label>Vehicle Type</label>
+            <input type="text" id="vehicleType" placeholder="">
+          </div>
+
+          <div><label>License Plate</label>
+            <input type="text" id="licensePlate" placeholder="">
+          </div>
+
+          <div><label>Vehicle ID</label>
+            <input type="text" id="vehicleId" placeholder="">
+          </div>
+
+          <div><label>Department</label>
+            <input type="text" id="department" placeholder="">
+          </div>
+
+          <div><label>Colour</label>
+            <input type="text" id="colour" placeholder="">
+          </div>
+
+          <div><label>Location</label>
+            <input type="text" id="location" placeholder="">
+          </div>
+
+          <div><label>GPS Serial No</label>
+            <input type="text" id="gpsSerial" placeholder="">
+          </div>
+
+          <div><label>GPS Unit ID</label>
+            <input type="text" id="gpsUnitId" placeholder="">
+          </div>
+
+          <div><label>GSM</label>
+            <input type="text" id="gsm" placeholder="">
+          </div>
+
+          <div><label>Distance</label>
+            <input type="number" id="distance" placeholder="">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BAGIAN 3 -->
+      <div class="form-section">
+        <h2>Bagian C – Hasil Uji dan Laporan</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Job Description</th>
+              <th>Status</th>
+
+              <th>Hasil Uji</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GPS Unit Module</td>
+              <td class="status-options">
+                <label><input type="radio" name="gps"> OK</label>
+                <label><input type="radio" name="gps"> Not OK</label>
+                <label><input type="radio" name="gps"> NA</label>
+              </td>
+
+              <td class="hasil-uji"><label><input type="checkbox"> Status Update</label></td>
+            </tr>
+            <tr>
+              <td>RFID Reader</td>
+              <td class="status-options">
+                <label><input type="radio" name="rfid"> OK</label>
+                <label><input type="radio" name="rfid"> Not OK</label>
+                <label><input type="radio" name="rfid"> NA</label>
+              </td>
+
+              <td class="hasil-uji"><label><input type="checkbox"> RFID Reader</label></td>
+            </tr>
+            <tr>
+              <td>Buzzer</td>
+              <td class="status-options">
+                <label><input type="radio" name="buzzer"> OK</label>
+                <label><input type="radio" name="buzzer"> Not OK</label>
+                <label><input type="radio" name="buzzer"> NA</label>
+              </td>
+
+              <td class="hasil-uji"><label><input type="checkbox"> Buzzer Speeding</label></td>
+            </tr>
+            <tr>
+              <td>Stater Interupter</td>
+              <td class="status-options">
+                <label><input type="radio" name="starter"> OK</label>
+                <label><input type="radio" name="starter"> Not OK</label>
+                <label><input type="radio" name="starter"> NA</label>
+              </td>
+
+              <td class="hasil-uji"><label><input type="checkbox"> Engine Kill</label></td>
+            </tr>
+            <tr>
+              <td>Fuel Stick</td>
+              <td class="status-options">
+                <label><input type="radio" name="fuel"> OK</label>
+                <label><input type="radio" name="fuel"> Not OK</label>
+                <label><input type="radio" name="fuel"> NA</label>
+              </td>
+
+              <td class="hasil-uji"><label><input type="checkbox"> Fuel Stick</label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BAGIAN 4 -->
+      <div class="form-section">
+        <h2>Bagian D – Status Komponen (Uraian Pemeriksaan)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Komponen</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Mesin</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-mesin" value="OK"> OK</label>
+                <label><input type="radio" name="d-mesin" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-mesin" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Panel Dasbord</td> <!-- disesuaikan -->
+              <td class="status-options">
+                <label><input type="radio" name="d-paneldashboard" value="OK"> OK</label>
+                <label><input type="radio" name="d-paneldashboard" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-paneldashboard" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Klakson</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-klakson" value="OK"> OK</label>
+                <label><input type="radio" name="d-klakson" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-klakson" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Audio</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-audio" value="OK"> OK</label>
+                <label><input type="radio" name="d-audio" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-audio" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Sistem listrik</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-listrik" value="OK"> OK</label>
+                <label><input type="radio" name="d-listrik" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-listrik" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>AC</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-ac" value="OK"> OK</label>
+                <label><input type="radio" name="d-ac" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-ac" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>Power windows</td> <!-- disesuaikan -->
+              <td class="status-options">
+                <label><input type="radio" name="d-powerwindows" value="OK"> OK</label>
+                <label><input type="radio" name="d-powerwindows" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-powerwindows" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>Panel Instrument</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-panelinstrument" value="OK"> OK</label>
+                <label><input type="radio" name="d-panelinstrument" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-panelinstrument" value="N/A"> N/A</label>
+              </td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>Spion</td>
+              <td class="status-options">
+                <label><input type="radio" name="d-spion" value="OK"> OK</label>
+                <label><input type="radio" name="d-spion" value="Not OK"> Not OK</label>
+                <label><input type="radio" name="d-spion" value="N/A"> N/A</label>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BAGIAN 5 -->
+      <div class="form-section">
+        <h2>Bagian E – Laporan Pekerjaan</h2>
+        <div class="grid-3">
+
+          <div style="grid-column: 1 / -1;">
+            <label>Deskripsi Pekerjaan</label>
+            <textarea id="deskripsiPekerjaan" placeholder="Tuliskan deskripsi pekerjaan di sini..."></textarea>
+          </div>
+
+          <div>
+            <label>Progress Status</label>
+            <select id="progressStatus">
+              <option value="">Pilih</option>
+              <option value="Not Started">Not Started</option>
+              <option value="On Progress">On Progress</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Upload Foto Bukti</label>
+            <input type="file" id="uploadFoto" accept="image/*">
+          </div>
+        </div>
+        <button type="button" class="submit-btn">Save Laporan</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- 🔄 LOADER OVERLAY -->
+  <div id="loaderOverlay" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+">
+    <div style="
+    width: 60px;
+    height: 60px;
+    border: 6px solid #fff;
+    border-top: 6px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  "></div>
+    <span>Mengirim data ke server...</span>
+  </div>
+
+  <!-- ====== PANEL LAPORAN (TERSEMBUNYI DI AWAL) ====== -->
+  <section id="reportSection" class="report-section">
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+
+      <!-- 🔍 INPUT PENCARIAN SPESIFIK -->
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
+
+        <!-- 🔍 Pencarian No Pekerjaan -->
+        <div>
+          <label for="searchJob" style="font-size:14px; margin-bottom:3px; display:block;">
+            Cari berdasarkan <strong>No Pekerjaan</strong>:
+          </label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <img src="https://i.postimg.cc/TwnkTvV6/istockphoto-2168706064-612x612.jpg" alt="Search Icon" style="width:55px; height:55px; object-fit:cover; border-radius:5px;">
+            <input type="text" id="searchJob" placeholder="Masukkan No Pekerjaan..." onkeyup="filterTable()" style="
+          padding:7px 10px;border:1px solid #ccc;border-radius:5px;width:200px;font-size:14px;">
+            <button onclick="clearSearchJob()" style="
+          background:#ff6666;color:white;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;">
+              ❌ Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- 🛻 Pencarian Vehicle ID -->
+        <div>
+          <label for="searchVehicle" style="font-size:14px; margin-bottom:3px; display:block;">
+            Cari berdasarkan <strong>Vehicle ID</strong>:
+          </label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <img src="https://i.postimg.cc/TwnkTvV6/istockphoto-2168706064-612x612.jpg" alt="Search Icon" style="width:55px; height:55px; object-fit:cover; border-radius:5px;">
+            <input type="text" id="searchVehicle" placeholder="Masukkan Vehicle ID..." onkeyup="filterTable()" style="
+          padding:7px 10px;border:1px solid #ccc;border-radius:5px;width:200px;font-size:14px;">
+            <button onclick="clearSearchVehicle()" style="
+          background:#ff6666;color:white;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;">
+              ❌ Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🎯 TOMBOL AKSI DI SEBELAH KANAN -->
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+
+        <button class="btn" onclick="loadReport()" style="
+        background:#2563eb;color:white;border:none;padding:10px 15px;
+        border-radius:5px;cursor:pointer;width:180px;font-weight:500;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+          🔄 Muat Ulang
+        </button>
+
+        <button onclick="downloadReportWithPhotos()" style="
+        background:#4caf50;color:white;border:none;padding:10px 15px;
+        border-radius:5px;cursor:pointer;width:180px;font-weight:500;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+          📥 Download Excel + Foto
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ✅ WRAPPER UNTUK SCROLL RESPONSIF -->
+    <div class="table-responsive">
+      <table id="reportTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Job Number</th>
+            <th>Tanggal</th>
+            <th>User Name</th>
+            <th>Working Type</th>
+            <th>Installation Type</th>
+            <th>Merk Kendaraan</th>
+            <th>Vehicle Type</th>
+            <th>License Plate</th>
+            <th>Vehicle id</th>
+            <th>Department</th>
+            <th>GPS Serial No</th>
+            <th>GPS Unit ID</th>
+            <th>GSM</th>
+            <th>Progres Status</th>
+            <th>Deskripsi Pekerjaan</th>
+            <th>Foto Bukti</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="pagination" style="text-align:center; margin-top:10px;"></div>
+    </div>
+  </section>
+
+  <!-- Library ExcelJS + FileSaver -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- ====== PANEL LAPORAN FOTO (TERSEMBUNYI DI AWAL) ====== -->
+  <section id="photoReportSection" class="photo-report-section">
+    <h1>Laporan Foto per Nomor Pekerjaan</h1>
+
+    <div class="photo-report-actions">
+      <button onclick="loadPhotoReport()">🔄 Muat Ulang</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="photo-report-table" id="photoReportTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nomor Pekerjaan</th>
+            <th>Nama User</th>
+            <th>Department</th>
+            <th>Vehicle id</th>
+            <th>Progres Status</th>
+            <th>Deskripsi Pekerjaan</th> <!-- ✅ Kolom baru -->
+            <th>Foto Bukti</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data dari JavaScript -->
+        </tbody>
+      </table>
+      <div id="photoPagination" style="text-align:center; margin-top:15px;"></div>
+
+    </div>
+  </section>
+
+  <div id="detailModal" class="modal">
+    <div id="detailContent" class="modal-content">
+      <!-- Konten detail akan dimasukkan lewat JS -->
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
